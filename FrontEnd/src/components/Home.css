@@ -1,0 +1,230 @@
+/* ---------- Base ---------- */
+.page {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #171717;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---------- Header ---------- */
+.header {
+  border-bottom: 2px solid #dc2626;
+}
+
+.header-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.logo-accent {
+  color: #dc2626;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav a {
+  color: #404040;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav a:hover {
+  color: #dc2626;
+}
+
+
+.btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 10px 16px;
+}
+
+.btn-primary {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #b91c1c;
+}
+
+.hero {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.hero-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 56px 24px;
+  text-align: center;
+}
+
+.hero-inner h1 {
+  font-size: 34px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.hero-inner p {
+  color: #fecaca;
+  margin: 0 0 32px;
+}
+
+.search-box {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  padding-left: 16px;
+  color: #a3a3a3;
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px;
+  font-size: 14px;
+  color: #171717;
+}
+
+.main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.main-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.main-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.results-count {
+  font-size: 14px;
+  color: #737373;
+}
+
+.vacancy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vacancy-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.vacancy-card:hover {
+  border-color: #fca5a5;
+}
+
+.vacancy-info h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.vacancy-info .company {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #737373;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: #737373;
+}
+
+.vacancy-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.salary {
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px 0;
+  color: #737373;
+  font-size: 14px;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  border-top: 1px solid #e5e5e5;
+}
+
+.footer-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #737373;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .nav {
+    display: none;
+  }
+
+  .vacancy-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .vacancy-action {
+    align-items: flex-start;
+    width: 100%;
+  }
+}
