@@ -17,9 +17,9 @@ namespace DAL.data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            //своя датабаза
+            string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=GameShop;Trusted_Connection=True;TrustServerCertificate=True;";
             optionsBuilder
-               .UseSqlServer();
+               .UseSqlServer(connectionString);
 
             base.OnConfiguring(optionsBuilder);
         }
