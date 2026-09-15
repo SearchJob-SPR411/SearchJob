@@ -14,15 +14,6 @@ namespace DAL.data
         public DbSet<UserEntity> Users => Set<UserEntity>();
         public DbSet<VacancyEntity> Vacancies => Set<VacancyEntity>();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-            string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=GameShop;Trusted_Connection=True;TrustServerCertificate=True;";
-            optionsBuilder
-               .UseSqlServer(connectionString);
-
-            base.OnConfiguring(optionsBuilder);
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
