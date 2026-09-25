@@ -29,23 +29,51 @@ namespace DAL.data
                 entity.HasIndex(u => u.Email).IsUnique();
             });
 
-            
             modelBuilder.Entity<VacancyEntity>(entity =>
             {
-                entity.Property(v => v.Title).HasMaxLength(150).IsRequired();
-                entity.Property(v => v.CompanyName).HasMaxLength(150).IsRequired();
-                entity.Property(v => v.Location).HasMaxLength(150).IsRequired();
-                entity.Property(v => v.Type).HasConversion<string>().HasMaxLength(20).IsRequired();
-                entity.Property(v => v.SalaryMin).HasColumnType("decimal(10,2)");
-                entity.Property(v => v.SalaryMax).HasColumnType("decimal(10,2)");
-                entity.Property(v => v.Description).IsRequired();
-                entity.Property(v => v.IsActive).IsRequired();
-                entity.Property(v => v.PostedAt).IsRequired();
+                entity.Property(v => v.Title)
+                .HasMaxLength(150)
+                .IsRequired();
+
+                entity.Property(v => v.CompanyName)
+                .HasMaxLength(150)
+                .IsRequired();
+
+                entity.Property(v => v.Location)
+                .HasMaxLength(150)
+                .IsRequired();
+
+                entity.Property(v => v.EmploymentType)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(v => v.WorkFormat)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(v => v.SalaryMin)
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(v => v.SalaryMax)
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(v => v.Description)
+                    .IsRequired();
+
+                entity.Property(v => v.IsActive)
+                    .IsRequired();
+
+                entity.Property(v => v.PostedAt)
+                    .IsRequired();
+
+                entity.Property(v => v.UpdatedAt);
 
                 entity.HasOne(v => v.User)
-                      .WithMany(u => u.Vacancies)
-                      .HasForeignKey(v => v.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                    .WithMany(u => u.Vacancies)
+                    .HasForeignKey(v => v.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
         }
