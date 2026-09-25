@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.Entity
 {
@@ -13,11 +8,17 @@ namespace DAL.Entity
         FullTime,
         PartTime,
         Contract,
-        Internship,
-        Remote
+        Internship
     }
 
-    public class VacancyEntity: IBaseEntity
+    public enum WorkFormat
+    {
+        Office,
+        Remote,
+        Hybrid
+    }
+
+    public class VacancyEntity : IBaseEntity
     {
         [Key]
         public int Id { get; set; }
@@ -32,12 +33,15 @@ namespace DAL.Entity
         public string Location { get; set; } = string.Empty;
 
         [Required]
-        public EmploymentType Type { get; set; } = EmploymentType.FullTime;
+        public EmploymentType EmploymentType { get; set; }
 
         [Required]
+        public WorkFormat WorkFormat { get; set; }
+
+        [Range(0, double.MaxValue)]
         public decimal? SalaryMin { get; set; }
 
-        [Required]
+        [Range(0, double.MaxValue)]
         public decimal? SalaryMax { get; set; }
 
         [Required]
@@ -47,10 +51,11 @@ namespace DAL.Entity
 
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;
 
+        public DateTime? UpdatedAt { get; set; }
+
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }
 
         public UserEntity? User { get; set; }
     }
-
 }
