@@ -2,9 +2,7 @@ using BLL;
 using BLL.Services;
 using DAL.data;
 using DAL.Repository;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json.Serialization;
 
 namespace API
@@ -31,8 +29,12 @@ namespace API
             // Add services for dependency injection
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
+
             builder.Services.AddScoped<IVacancyRepository, VacancyRepository>();
             builder.Services.AddScoped<IVacancyService, VacancyService>();
+
+            builder.Services.AddScoped<IResumeRepository, ResumeRepository>();
+            builder.Services.AddScoped<IResumeService, ResumeService>();
 
             // Add AutoMapper
             builder.Services.AddAutoMapper(cfg =>

@@ -12,6 +12,7 @@ namespace BLL
             // Entity -> DTO
             CreateMap<UserEntity, UserDto>();
             CreateMap<VacancyEntity, VacancyDto>();
+            CreateMap<ResumeEntity, ResumeDto>();
 
             // DTO -> Entity
             // Don't map PasswordHash from DTOs (they shouldn't carry password hashes)
@@ -19,6 +20,7 @@ namespace BLL
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
 
             CreateMap<VacancyDto, VacancyEntity>();
+            
         }
     }
 }
