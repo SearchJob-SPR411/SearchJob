@@ -13,7 +13,7 @@ namespace DAL.data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<UserEntity> Users => Set<UserEntity>();
         public DbSet<VacancyEntity> Vacancies => Set<VacancyEntity>();
-
+        public DbSet<ResumeEntity> Resumes => Set<ResumeEntity>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
@@ -76,6 +76,34 @@ namespace DAL.data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<ResumeEntity>(entity =>
+            {
+                entity.Property(r => r.Title)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(r => r.Summary)
+                    .HasMaxLength(2000);
+
+                entity.Property(r => r.Skills)
+                    .HasMaxLength(2000);
+
+                entity.Property(r => r.Experience)
+                    .HasMaxLength(5000);
+
+                entity.Property(r => r.Education)
+                    .HasMaxLength(5000);
+
+                entity.Property(r => r.CreatedAt)
+                    .IsRequired();
+
+                entity.Property(r => r.UpdatedAt);
+
+                entity.HasOne(r => r.User)
+                    .WithMany(u => u.Resumes)
+                    .HasForeignKey(r => r.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }
