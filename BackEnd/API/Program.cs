@@ -36,13 +36,25 @@ namespace API
             builder.Services.AddScoped<IResumeRepository, ResumeRepository>();
             builder.Services.AddScoped<IResumeService, ResumeService>();
 
+            // Register Login Service (Hardcoded mock implementation)
+            builder.Services.AddScoped<ILoginService, LoginService>();
+
+            // Enable CORS for frontend development
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             // Add AutoMapper
             builder.Services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfile<MappingProfile>();
             });
-
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -55,6 +67,8 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("AllowAll");
 
             app.UseHttpsRedirection();
 

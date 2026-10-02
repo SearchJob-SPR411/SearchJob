@@ -58,7 +58,7 @@ const VACANCIES = [
   },
 ];
 
-export default function Home() {
+export default function Home({ onNavigate, currentUser, onLogout }) {
   const [query, setQuery] = useState("");
 
   const filtered = VACANCIES.filter((v) =>
@@ -78,6 +78,27 @@ export default function Home() {
             <a href="#!">Vacancies</a>
             <a href="#!">Companies</a>
             <a href="#!">About</a>
+            {currentUser ? (
+              <span className="user-greeting">
+                👤 {currentUser.firstName}
+                <button
+                  type="button"
+                  className="btn-link"
+                  onClick={onLogout}
+                  title="Вийти з акаунту"
+                >
+                  (Вийти)
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-login"
+                onClick={() => onNavigate && onNavigate("login")}
+              >
+                Log in
+              </button>
+            )}
           </nav>
           <button className="btn btn-primary">Post a job</button>
         </div>
