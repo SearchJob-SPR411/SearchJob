@@ -18,6 +18,14 @@ namespace DAL.Entity
         Hybrid
     }
 
+    public enum VacancyStatus
+    {
+        Draft,
+        Active,
+        Paused,
+        Closed
+    }
+
     public class VacancyEntity : IBaseEntity
     {
         [Key]
@@ -26,8 +34,10 @@ namespace DAL.Entity
         [Required, MaxLength(150)]
         public string Title { get; set; } = string.Empty;
 
-        [Required, MaxLength(150)]
-        public string CompanyName { get; set; } = string.Empty;
+        [Required]
+        public int CompanyId { get; set; }
+
+        public CompanyEntity? Company { get; set; }
 
         [Required, MaxLength(150)]
         public string Location { get; set; } = string.Empty;
@@ -46,16 +56,12 @@ namespace DAL.Entity
 
         [Required]
         public string Description { get; set; } = string.Empty;
-
-        public bool IsActive { get; set; } = true;
-
+        public VacancyStatus Status { get; set; } = VacancyStatus.Draft;
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;
-
         public DateTime? UpdatedAt { get; set; }
-
+        
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }
-
         public UserEntity? User { get; set; }
     }
 }

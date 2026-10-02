@@ -22,6 +22,17 @@ namespace API
                         new JsonStringEnumConverter());
                 });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("ReactApp", policy =>
+                {
+                    policy
+                        .WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(
                     builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -36,6 +47,9 @@ namespace API
             builder.Services.AddScoped<IResumeRepository, ResumeRepository>();
             builder.Services.AddScoped<IResumeService, ResumeService>();
 
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<ICompanyService, CompanyService>();
+
             // Add AutoMapper
             builder.Services.AddAutoMapper(cfg =>
             {
@@ -48,6 +62,8 @@ namespace API
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            app.UseCors("ReactApp");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -36,6 +36,13 @@ namespace API.Controllers
             return Ok(vacancy);
         }
 
+        [HttpGet("company/{companyId}")]
+        public async Task<IActionResult> GetByCompanyId(int companyId)
+        {
+            var vacancies = await _vacancyService.GetByCompanyIdAsync(companyId);
+            return Ok(vacancies);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateVacancyDto dto)
         {
