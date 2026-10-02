@@ -65,6 +65,36 @@
   background: #b91c1c;
 }
 
+.btn-login {
+  background: transparent;
+  color: #171717;
+  border: 1px solid #d1d5db;
+}
+
+.btn-login:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.user-greeting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #dc2626;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
 .hero {
   background: #dc2626;
   color: #ffffff;
