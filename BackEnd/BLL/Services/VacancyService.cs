@@ -2,11 +2,6 @@
 using BLL.DTO;
 using DAL.Entity;
 using DAL.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Services
 {
@@ -42,19 +37,25 @@ namespace BLL.Services
             return _mapper.Map<VacancyDto>(vacancy);
         }
 
+        public async Task<List<VacancyDto>> GetByCompanyIdAsync(int companyId)
+        {
+            var vacancies = await _vacancyRepository.GetByCompanyIdAsync(companyId);
+            return _mapper.Map<List<VacancyDto>>(vacancies);
+        }
+
         public async Task<VacancyDto> CreateAsync(CreateVacancyDto dto)
         {
             var vacancy = new VacancyEntity
             {
                 Title = dto.Title,
-                CompanyName = dto.CompanyName,
+                CompanyId = dto.CompanyId,
                 Location = dto.Location,
                 EmploymentType = dto.EmploymentType,
                 WorkFormat = dto.WorkFormat,
                 SalaryMin = dto.SalaryMin,
                 SalaryMax = dto.SalaryMax,
                 Description = dto.Description,
-                IsActive = dto.IsActive,
+                Status = dto.Status,
                 UserId = dto.UserId
             };
 
@@ -76,14 +77,14 @@ namespace BLL.Services
             }
 
             vacancy.Title = dto.Title;
-            vacancy.CompanyName = dto.CompanyName;
+            vacancy.CompanyId = dto.CompanyId;
             vacancy.Location = dto.Location;
             vacancy.EmploymentType = dto.EmploymentType;
             vacancy.WorkFormat = dto.WorkFormat;
             vacancy.SalaryMin = dto.SalaryMin;
             vacancy.SalaryMax = dto.SalaryMax;
             vacancy.Description = dto.Description;
-            vacancy.IsActive = dto.IsActive;
+            vacancy.Status = dto.Status;
             vacancy.UpdatedAt = DateTime.UtcNow;
 
             await _vacancyRepository.UpdateAsync(vacancy);

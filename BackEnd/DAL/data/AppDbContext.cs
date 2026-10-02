@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DAL.Entity;
 using Microsoft.EntityFrameworkCore;
-using DAL.Entity;
 
 namespace DAL.data
 {
@@ -14,6 +9,7 @@ namespace DAL.data
         public DbSet<UserEntity> Users => Set<UserEntity>();
         public DbSet<VacancyEntity> Vacancies => Set<VacancyEntity>();
         public DbSet<ResumeEntity> Resumes => Set<ResumeEntity>();
+        public DbSet<CompanyEntity> Companies => Set<CompanyEntity>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
@@ -32,10 +28,6 @@ namespace DAL.data
             modelBuilder.Entity<VacancyEntity>(entity =>
             {
                 entity.Property(v => v.Title)
-                .HasMaxLength(150)
-                .IsRequired();
-
-                entity.Property(v => v.CompanyName)
                 .HasMaxLength(150)
                 .IsRequired();
 
@@ -62,7 +54,9 @@ namespace DAL.data
                 entity.Property(v => v.Description)
                     .IsRequired();
 
-                entity.Property(v => v.IsActive)
+                entity.Property(v => v.Status)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
                     .IsRequired();
 
                 entity.Property(v => v.PostedAt)
@@ -102,6 +96,38 @@ namespace DAL.data
                 entity.HasOne(r => r.User)
                     .WithMany(u => u.Resumes)
                     .HasForeignKey(r => r.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<CompanyEntity>(entity =>
+            {
+                entity.Property(c => c.Name)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(c => c.Description)
+                    .HasMaxLength(2000);
+
+                entity.Property(c => c.Website)
+                    .HasMaxLength(500);
+
+                entity.Property(c => c.Location)
+                    .HasMaxLength(150);
+
+                entity.Property(c => c.LogoUrl)
+                    .HasMaxLength(500);
+
+                entity.Property(c => c.CreatedAt)
+                    .IsRequired();
+
+                entity.HasOne(c => c.User)
+                    .WithMany()
+                    .HasForeignKey(c => c.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(c => c.Vacancies)
+                    .WithOne(v => v.Company)
+                    .HasForeignKey(v => v.CompanyId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }

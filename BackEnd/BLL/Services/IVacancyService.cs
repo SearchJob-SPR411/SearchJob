@@ -11,6 +11,7 @@ namespace BLL.Services
     {
         Task<List<VacancyDto>> GetAllAsync();
         Task<VacancyDto?> GetByIdAsync(int id);
+        Task<List<VacancyDto>> GetByCompanyIdAsync(int companyId);
         Task<VacancyDto> CreateAsync(CreateVacancyDto dto);
         Task<bool> UpdateAsync(int id, UpdateVacancyDto dto);
         Task<bool> DeleteAsync(int id);
