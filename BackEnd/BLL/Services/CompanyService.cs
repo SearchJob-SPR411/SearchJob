@@ -40,6 +40,14 @@ namespace BLL.Services
 
         public async Task<CompanyDto> CreateAsync(CreateCompanyDto dto)
         {
+            var existingCompanies = await _companyRepository.GetByUserIdAsync(dto.UserId);
+
+            if (existingCompanies.Any())
+            {
+                throw new InvalidOperationException(
+                    "Recruiter can have only one company.");
+            }
+
             var company = new CompanyEntity
             {
                 Name = dto.Name,
@@ -49,38 +57,58 @@ namespace BLL.Services
                 LogoUrl = dto.LogoUrl,
                 UserId = dto.UserId
             };
+
             var createdCompany = await _companyRepository.CreateAsync(company);
+
             return _mapper.Map<CompanyDto>(createdCompany);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateCompanyDto dto)
+        public async Task<bool> UpdateAsync(int id, UpdateCompanyDto dto, int userId)
         {
             var company = await _companyRepository.GetByIdAsync(id);
+
             if (company == null)
             {
                 return false;
             }
+
+            if (company.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("You can only update your own company");
+            }
+
             company.Name = dto.Name;
             company.Description = dto.Description;
             company.Website = dto.Website;
             company.Location = dto.Location;
             company.LogoUrl = dto.LogoUrl;
+
             await _companyRepository.UpdateAsync(company);
+
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, int userId)
         {
             var company = await _companyRepository.GetByIdAsync(id);
+
             if (company == null)
             {
                 return false;
             }
+
+            if (company.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("You can only delete your own company");
+            }
+
             var companyEntity = new CompanyEntity
             {
                 Id = company.Id
             };
+
             await _companyRepository.DeleteAsync(companyEntity);
+
             return true;
         }
     }

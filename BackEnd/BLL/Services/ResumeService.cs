@@ -65,12 +65,19 @@ namespace BLL.Services
             return _mapper.Map<ResumeDto>(createdResume);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateResumeDto dto)
+        public async Task<bool> UpdateAsync(int id, UpdateResumeDto dto, int userId)
         {
             var resume = await _repository.GetByIdAsync(id);
 
             if (resume == null)
+            {
                 return false;
+            }
+
+            if (resume.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("You can only update your own resume");
+            }
 
             var updatedResume = new ResumeEntity
             {
@@ -90,12 +97,19 @@ namespace BLL.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, int userId)
         {
             var resume = await _repository.GetByIdAsync(id);
 
             if (resume == null)
+            {
                 return false;
+            }
+
+            if (resume.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("You can only delete your own resume");
+            }
 
             var resumeToDelete = new ResumeEntity
             {

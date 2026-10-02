@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BLL.DTO;
 using DAL.Entity;
+using DAL.Enums;
 using DAL.Repository;
+using Microsoft.AspNetCore.Identity;
 
 namespace BLL.Services
 {
@@ -9,13 +11,13 @@ namespace BLL.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly PasswordHasher<UserEntity> _passwordHasher;
 
-        public UserService(
-            IUserRepository userRepository,
-            IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _passwordHasher = new PasswordHasher<UserEntity>();
         }
 
         public async Task<List<UserDto>> GetAllAsync()
@@ -55,8 +57,12 @@ namespace BLL.Services
 
             if (existingUser != null)
             {
-                throw new InvalidOperationException(
-                    "User with this email already exists.");
+                throw new InvalidOperationException("User with this email already exists");
+            }
+
+            if (dto.Role == UserRole.Admin)
+            {
+                throw new InvalidOperationException("Admin role cannot be assigned during registration");
             }
 
             var user = new UserEntity
@@ -65,10 +71,10 @@ namespace BLL.Services
                 LastName = dto.LastName,
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
-                                
-                // Temporary solution. Password hashing will be implemented with authentication.
-                PasswordHash = dto.Password
+                Role = dto.Role
             };
+
+            user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
 
             var createdUser = await _userRepository.CreateAsync(user);
 

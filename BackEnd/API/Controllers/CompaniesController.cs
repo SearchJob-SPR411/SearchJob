@@ -1,6 +1,8 @@
 using BLL.DTO;
 using BLL.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -44,41 +46,93 @@ namespace API.Controllers
             return Ok(companies);
         }
 
+        [Authorize(Roles = "Recruiter")]
         [HttpPost]
         public async Task<ActionResult<CompanyDto>> Create(CreateCompanyDto dto)
         {
-            var company = await _companyService.CreateAsync(dto);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = company.Id },
-                company);
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            dto.UserId = userId;
+
+            try
+            {
+                var company = await _companyService.CreateAsync(dto);
+
+                return CreatedAtAction(
+                    nameof(GetById),
+                    new { id = company.Id },
+                    company);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new
+                {
+                    message = ex.Message
+                });
+            }
         }
 
+        [Authorize(Roles = "Recruiter")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UpdateCompanyDto dto)
         {
-            var updated = await _companyService.UpdateAsync(id, dto);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!updated)
+            if (!int.TryParse(userIdClaim, out var userId))
             {
-                return NotFound();
+                return Unauthorized();
             }
 
-            return NoContent();
+            try
+            {
+                var updated = await _companyService.UpdateAsync(id, dto, userId);
+
+                if (!updated)
+                {
+                    return NotFound();
+                }
+
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
         }
 
+        [Authorize(Roles = "Recruiter")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _companyService.DeleteAsync(id);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!deleted)
+            if (!int.TryParse(userIdClaim, out var userId))
             {
-                return NotFound();
+                return Unauthorized();
             }
 
-            return NoContent();
+            try
+            {
+                var deleted = await _companyService.DeleteAsync(
+                    id,
+                    userId);
+
+                if (!deleted)
+                {
+                    return NotFound();
+                }
+
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
         }
     }
 }

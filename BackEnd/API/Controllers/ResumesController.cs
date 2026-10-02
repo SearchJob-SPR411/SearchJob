@@ -1,6 +1,8 @@
 using BLL.DTO;
 using BLL.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -42,9 +44,19 @@ namespace API.Controllers
             return Ok(resumes);
         }
 
+        [Authorize(Roles = "JobSeeker")]
         [HttpPost]
         public async Task<ActionResult<ResumeDto>> Create(CreateResumeDto dto)
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            dto.UserId = userId;
+
             var resume = await _service.CreateAsync(dto);
 
             return CreatedAtAction(
@@ -53,26 +65,60 @@ namespace API.Controllers
                 resume);
         }
 
+        [Authorize(Roles = "JobSeeker")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UpdateResumeDto dto)
         {
-            var updated = await _service.UpdateAsync(id, dto);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!updated)
-                return NotFound();
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
 
-            return NoContent();
+            try
+            {
+                var updated = await _service.UpdateAsync(id, dto, userId);
+
+                if (!updated)
+                {
+                    return NotFound();
+                }
+
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
         }
 
+        [Authorize(Roles = "JobSeeker")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _service.DeleteAsync(id);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!deleted)
-                return NotFound();
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
 
-            return NoContent();
+            try
+            {
+                var deleted = await _service.DeleteAsync(id, userId);
+
+                if (!deleted)
+                {
+                    return NotFound();
+                }
+
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
         }
     }
 }
