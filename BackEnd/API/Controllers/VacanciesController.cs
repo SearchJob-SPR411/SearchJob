@@ -1,6 +1,8 @@
 using BLL.DTO;
 using BLL.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -43,9 +45,19 @@ namespace API.Controllers
             return Ok(vacancies);
         }
 
+        [Authorize(Roles = "Recruiter")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateVacancyDto dto)
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            dto.UserId = userId;
+
             var vacancy = await _vacancyService.CreateAsync(dto);
 
             return CreatedAtAction(
@@ -54,32 +66,63 @@ namespace API.Controllers
                 vacancy);
         }
 
+        [Authorize(Roles = "Recruiter")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(
-            int id,
-            UpdateVacancyDto dto)
+        public async Task<IActionResult> Update(int id, UpdateVacancyDto dto)
         {
-            var updated = await _vacancyService.UpdateAsync(id, dto);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!updated)
+            if (!int.TryParse(userIdClaim, out var userId))
             {
-                return NotFound();
+                return Unauthorized();
             }
 
-            return NoContent();
+            try
+            {
+                var updated = await _vacancyService.UpdateAsync(
+                    id,
+                    dto,
+                    userId);
+
+                if (!updated)
+                {
+                    return NotFound();
+                }
+
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
         }
 
+        [Authorize(Roles = "Recruiter")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _vacancyService.DeleteAsync(id);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!deleted)
+            if (!int.TryParse(userIdClaim, out var userId))
             {
-                return NotFound();
+                return Unauthorized();
             }
 
-            return NoContent();
+            try
+            {
+                var deleted = await _vacancyService.DeleteAsync(id, userId);
+
+                if (!deleted)
+                {
+                    return NotFound();
+                }
+
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
         }
     }
 }

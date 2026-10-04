@@ -13,7 +13,7 @@ namespace BLL.Services
         Task<ResumeDto?> GetByIdAsync(int id);
         Task<IEnumerable<ResumeDto>> GetByUserIdAsync(int userId);
         Task<ResumeDto> CreateAsync(CreateResumeDto dto);
-        Task<bool> UpdateAsync(int id, UpdateResumeDto dto);
-        Task<bool> DeleteAsync(int id);
+        Task<bool> UpdateAsync(int id, UpdateResumeDto dto, int userId);
+        Task<bool> DeleteAsync(int id, int userId);
     }
 }

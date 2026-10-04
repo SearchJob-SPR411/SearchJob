@@ -6,34 +6,55 @@ namespace DAL.data
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
         public DbSet<UserEntity> Users => Set<UserEntity>();
         public DbSet<VacancyEntity> Vacancies => Set<VacancyEntity>();
         public DbSet<ResumeEntity> Resumes => Set<ResumeEntity>();
         public DbSet<CompanyEntity> Companies => Set<CompanyEntity>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
             modelBuilder.Entity<UserEntity>(entity =>
             {
-                entity.Property(u => u.FirstName).HasMaxLength(100).IsRequired();
-                entity.Property(u => u.LastName).HasMaxLength(100).IsRequired();
-                entity.Property(u => u.Email).HasMaxLength(256).IsRequired();
-                entity.Property(u => u.PasswordHash).IsRequired();
-                entity.Property(u => u.PhoneNumber).HasMaxLength(30);
-                entity.Property(u => u.CreatedAt).IsRequired();
+                entity.Property(u => u.FirstName)
+                    .HasMaxLength(100)
+                    .IsRequired();
 
-                entity.HasIndex(u => u.Email).IsUnique();
+                entity.Property(u => u.LastName)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(u => u.Email)
+                    .HasMaxLength(256)
+                    .IsRequired();
+
+                entity.Property(u => u.PasswordHash)
+                    .IsRequired();
+
+                entity.Property(u => u.PhoneNumber)
+                    .HasMaxLength(30);
+
+                entity.Property(u => u.Role)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(u => u.CreatedAt)
+                    .IsRequired();
+
+                entity.HasIndex(u => u.Email)
+                    .IsUnique();
             });
 
             modelBuilder.Entity<VacancyEntity>(entity =>
             {
                 entity.Property(v => v.Title)
-                .HasMaxLength(150)
-                .IsRequired();
+                    .HasMaxLength(150)
+                    .IsRequired();
 
                 entity.Property(v => v.Location)
-                .HasMaxLength(150)
-                .IsRequired();
+                    .HasMaxLength(150)
+                    .IsRequired();
 
                 entity.Property(v => v.EmploymentType)
                     .HasConversion<string>()

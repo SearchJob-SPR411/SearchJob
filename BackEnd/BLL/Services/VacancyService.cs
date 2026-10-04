@@ -59,21 +59,23 @@ namespace BLL.Services
                 UserId = dto.UserId
             };
 
-            var createdVacancy =
-                await _vacancyRepository.CreateAsync(vacancy);
+            var createdVacancy = await _vacancyRepository.CreateAsync(vacancy);
 
             return _mapper.Map<VacancyDto>(createdVacancy);
         }
 
-        public async Task<bool> UpdateAsync(
-            int id,
-            UpdateVacancyDto dto)
+        public async Task<bool> UpdateAsync(int id, UpdateVacancyDto dto, int userId)
         {
             var vacancy = await _vacancyRepository.GetByIdAsync(id);
 
             if (vacancy == null)
             {
                 return false;
+            }
+
+            if (vacancy.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("You can only update your own vacancies");
             }
 
             vacancy.Title = dto.Title;
@@ -92,13 +94,18 @@ namespace BLL.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, int userId)
         {
             var vacancy = await _vacancyRepository.GetByIdAsync(id);
 
             if (vacancy == null)
             {
                 return false;
+            }
+
+            if (vacancy.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("You can only delete your own vacancies");
             }
 
             var vacancyEntity = new VacancyEntity
