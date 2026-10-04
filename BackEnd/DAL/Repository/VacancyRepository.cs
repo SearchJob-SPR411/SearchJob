@@ -16,6 +16,7 @@ namespace DAL.Repository
         public async Task<List<VacancyEntity>> GetAllAsync()
         {
             return await _context.Vacancies
+                .Include(v => v.Company)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -23,8 +24,18 @@ namespace DAL.Repository
         public async Task<VacancyEntity?> GetByIdAsync(int id)
         {
             return await _context.Vacancies
+                .Include(v => v.Company)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(v => v.Id == id);
+        }
+
+        public async Task<List<VacancyEntity>> GetByCompanyIdAsync(int companyId)
+        {
+            return await _context.Vacancies
+                .Include(v => v.Company)
+                .AsNoTracking()
+                .Where(v => v.CompanyId == companyId)
+                .ToListAsync();
         }
 
         public async Task<VacancyEntity> CreateAsync(VacancyEntity vacancy)
