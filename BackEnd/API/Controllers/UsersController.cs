@@ -2,6 +2,7 @@ using BLL.DTO;
 using BLL.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -29,6 +30,18 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userIdClaim, out var currentUserId))
+            {
+                return Unauthorized();
+            }
+
+            if (!User.IsInRole("Admin") && currentUserId != id)
+            {
+                return Forbid();
+            }
+
             var user = await _userService.GetByIdAsync(id);
 
             if (user == null)
@@ -53,6 +66,14 @@ namespace API.Controllers
             }
             catch (InvalidOperationException ex)
             {
+                if (ex.Message == "Admin role cannot be assigned during registration")
+                {
+                    return BadRequest(new
+                    {
+                        message = ex.Message
+                    });
+                }
+
                 return Conflict(new
                 {
                     message = ex.Message
@@ -60,11 +81,22 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(
-            int id,
-            UpdateUserDto dto)
+        public async Task<IActionResult> Update(int id, UpdateUserDto dto)
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userIdClaim, out var currentUserId))
+            {
+                return Unauthorized();
+            }
+
+            if (!User.IsInRole("Admin") && currentUserId != id)
+            {
+                return Forbid();
+            }
+
             var updated = await _userService.UpdateAsync(id, dto);
 
             if (!updated)
@@ -75,9 +107,22 @@ namespace API.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(userIdClaim, out var currentUserId))
+            {
+                return Unauthorized();
+            }
+
+            if (!User.IsInRole("Admin") && currentUserId != id)
+            {
+                return Forbid();
+            }
+
             var deleted = await _userService.DeleteAsync(id);
 
             if (!deleted)

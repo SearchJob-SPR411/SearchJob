@@ -17,28 +17,62 @@ namespace API.Controllers
             _service = service;
         }
 
+        [Authorize(Roles = "Admin,Recruiter")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ResumeDto>>> GetAll()
         {
             var resumes = await _service.GetAllAsync();
-
             return Ok(resumes);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<ResumeDto>> GetById(int id)
         {
             var resume = await _service.GetByIdAsync(id);
 
             if (resume == null)
+            {
                 return NotFound();
+            }
+
+            if (User.IsInRole("JobSeeker"))
+            {
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (!int.TryParse(userIdClaim, out var userId))
+                {
+                    return Unauthorized();
+                }
+
+                if (resume.UserId != userId)
+                {
+                    return Forbid();
+                }
+            }
 
             return Ok(resume);
         }
 
+        [Authorize]
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<ResumeDto>>> GetByUserId(int userId)
         {
+            if (User.IsInRole("JobSeeker"))
+            {
+                var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (!int.TryParse(userIdClaim, out var currentUserId))
+                {
+                    return Unauthorized();
+                }
+
+                if (currentUserId != userId)
+                {
+                    return Forbid();
+                }
+            }
+
             var resumes = await _service.GetByUserIdAsync(userId);
 
             return Ok(resumes);
@@ -57,12 +91,22 @@ namespace API.Controllers
 
             dto.UserId = userId;
 
-            var resume = await _service.CreateAsync(dto);
+            try
+            {
+                var resume = await _service.CreateAsync(dto);
 
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = resume.Id },
-                resume);
+                return CreatedAtAction(
+                    nameof(GetById),
+                    new { id = resume.Id },
+                    resume);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
         }
 
         [Authorize(Roles = "JobSeeker")]

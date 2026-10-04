@@ -35,6 +35,11 @@ namespace DAL.Repository
                 .Where(r => r.UserId == userId)
                 .ToListAsync();
         }
+        public async Task<int> CountByUserIdAsync(int userId)
+        {
+            return await _context.Resumes
+                .CountAsync(r => r.UserId == userId);
+        }
         public async Task<ResumeEntity> CreateAsync(ResumeEntity resume)
         {
             _context.Resumes.Add(resume);

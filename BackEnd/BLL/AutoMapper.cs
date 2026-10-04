@@ -19,6 +19,8 @@ namespace BLL
                         : string.Empty));
             CreateMap<ResumeEntity, ResumeDto>();
             CreateMap<CompanyEntity, CompanyDto>();
+            CreateMap<SubscriptionEntity, SubscriptionDto>();
+
 
             // DTO -> Entity
             // Don't map PasswordHash from DTOs (they shouldn't carry password hashes)

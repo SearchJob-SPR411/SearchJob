@@ -11,6 +11,7 @@ namespace DAL.data
         public DbSet<VacancyEntity> Vacancies => Set<VacancyEntity>();
         public DbSet<ResumeEntity> Resumes => Set<ResumeEntity>();
         public DbSet<CompanyEntity> Companies => Set<CompanyEntity>();
+        public DbSet<SubscriptionEntity> Subscriptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -149,6 +150,31 @@ namespace DAL.data
                 entity.HasMany(c => c.Vacancies)
                     .WithOne(v => v.Company)
                     .HasForeignKey(v => v.CompanyId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<SubscriptionEntity>(entity =>
+            {
+                entity.ToTable("Subscriptions");
+
+                entity.Property(s => s.Type)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(s => s.Status)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(s => s.StartedAt)
+                    .IsRequired();
+
+                entity.Property(s => s.ExpiresAt);
+
+                entity.HasOne(s => s.User)
+                    .WithOne(u => u.Subscription)
+                    .HasForeignKey<SubscriptionEntity>(s => s.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
