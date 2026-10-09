@@ -102,6 +102,12 @@ namespace API
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
             builder.Services.AddScoped<ICompanyService, CompanyService>();
 
+            builder.Services.AddScoped<IFavoriteVacancyRepository, FavoriteVacancyRepository>();
+            builder.Services.AddScoped<IFavoriteVacancyService, FavoriteVacancyService>();
+
+            builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
+            builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
+
             // Add AutoMapper
             builder.Services.AddAutoMapper(cfg =>
             {

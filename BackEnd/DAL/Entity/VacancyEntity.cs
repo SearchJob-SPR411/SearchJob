@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Entity
@@ -63,5 +63,8 @@ namespace DAL.Entity
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }
         public UserEntity? User { get; set; }
+
+        public ICollection<FavoriteVacancyEntity> Favorites { get; set; } = new List<FavoriteVacancyEntity>();
+        public ICollection<JobApplicationEntity> Applications { get; set; } = new List<JobApplicationEntity>();
     }
 }
