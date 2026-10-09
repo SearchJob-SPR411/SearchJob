@@ -2,7 +2,7 @@ import axios from "axios";
 import { env } from "./env.js";
 
 export const api = axios.create({
-  baseURL: env.api || "http://localhost:5000/api/",
+  baseURL: env.api || "http://localhost:5052/api/",
 });
 
 api.interceptors.request.use((config) => {
