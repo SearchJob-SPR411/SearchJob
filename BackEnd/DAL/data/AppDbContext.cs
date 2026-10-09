@@ -1,4 +1,4 @@
-﻿using DAL.Entity;
+using DAL.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.data
@@ -11,6 +11,8 @@ namespace DAL.data
         public DbSet<VacancyEntity> Vacancies => Set<VacancyEntity>();
         public DbSet<ResumeEntity> Resumes => Set<ResumeEntity>();
         public DbSet<CompanyEntity> Companies => Set<CompanyEntity>();
+        public DbSet<FavoriteVacancyEntity> FavoriteVacancies => Set<FavoriteVacancyEntity>();
+        public DbSet<JobApplicationEntity> JobApplications => Set<JobApplicationEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -150,6 +152,60 @@ namespace DAL.data
                     .WithOne(v => v.Company)
                     .HasForeignKey(v => v.CompanyId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<FavoriteVacancyEntity>(entity =>
+            {
+                entity.HasKey(f => f.Id);
+
+                entity.HasIndex(f => new { f.UserId, f.VacancyId })
+                    .IsUnique();
+
+                entity.Property(f => f.CreatedAt)
+                    .IsRequired();
+
+                entity.HasOne(f => f.User)
+                    .WithMany(u => u.FavoriteVacancies)
+                    .HasForeignKey(f => f.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(f => f.Vacancy)
+                    .WithMany(v => v.Favorites)
+                    .HasForeignKey(f => f.VacancyId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<JobApplicationEntity>(entity =>
+            {
+                entity.HasKey(a => a.Id);
+
+                entity.Property(a => a.CoverLetter)
+                    .HasMaxLength(2000);
+
+                entity.Property(a => a.Status)
+                    .HasConversion<string>()
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(a => a.AppliedAt)
+                    .IsRequired();
+
+                entity.Property(a => a.UpdatedAt);
+
+                entity.HasOne(a => a.User)
+                    .WithMany(u => u.Applications)
+                    .HasForeignKey(a => a.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(a => a.Vacancy)
+                    .WithMany(v => v.Applications)
+                    .HasForeignKey(a => a.VacancyId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(a => a.Resume)
+                    .WithMany()
+                    .HasForeignKey(a => a.ResumeId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
         }
     }

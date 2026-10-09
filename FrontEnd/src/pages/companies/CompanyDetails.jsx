@@ -100,9 +100,20 @@ export default function CompanyDetails() {
                     </Typography>
                 )}
 
-                <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-                    Vacancies
-                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 5, mb: 2 }}>
+                    <Typography variant="h5">
+                        Vacancies
+                    </Typography>
+
+                    <Button
+                        component={Link}
+                        to={`/vacancies/create?companyId=${company.id}`}
+                        variant="contained"
+                        size="small"
+                    >
+                        + Add vacancy
+                    </Button>
+                </Box>
 
                 <Box
                     sx={{

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using DAL.Enums;
 
 namespace DAL.Entity
@@ -30,5 +30,9 @@ namespace DAL.Entity
         public ICollection<VacancyEntity> Vacancies { get; set; } = new List<VacancyEntity>();
 
         public ICollection<ResumeEntity> Resumes { get; set; } = new List<ResumeEntity>();
+
+        public ICollection<FavoriteVacancyEntity> FavoriteVacancies { get; set; } = new List<FavoriteVacancyEntity>();
+
+        public ICollection<JobApplicationEntity> Applications { get; set; } = new List<JobApplicationEntity>();
     }
 }
