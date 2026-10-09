@@ -9,6 +9,7 @@ import CompanyDetails from "./pages/companies/CompanyDetails";
 import Favorites from "./pages/favorites/Favorites";
 import MyApplications from "./pages/applications/MyApplications";
 import VacancyApplications from "./pages/applications/VacancyApplications";
+import EmployerDashboard from "./pages/employer/EmployerDashboard";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/applications" element={<MyApplications />} />
           <Route path="/companies" element={<Companies />} />
           <Route path="/companies/:id" element={<CompanyDetails />} />
+          <Route path="/employer/dashboard" element={<EmployerDashboard />} />
         </Routes>
       </DefaultLayout>
     </BrowserRouter>

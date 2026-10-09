@@ -56,6 +56,14 @@ export default function Navbar() {
 
                     <Button
                         component={Link}
+                        to="/employer/dashboard"
+                        color="inherit"
+                    >
+                        Кабінет роботодавця
+                    </Button>
+
+                    <Button
+                        component={Link}
                         to="/companies"
                         color="inherit"
                     >
