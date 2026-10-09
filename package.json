@@ -1,0 +1,10 @@
+{
+  "name": "searchjob-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix FrontEnd start",
+    "build": "npm --prefix FrontEnd run build",
+    "test": "npm --prefix FrontEnd test"
+  }
+}
