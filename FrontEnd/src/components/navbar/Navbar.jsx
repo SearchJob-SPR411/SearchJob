@@ -1,4 +1,5 @@
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
@@ -37,6 +38,15 @@ export default function Navbar() {
 
                     <Button color="inherit">
                         Resumes
+                    </Button>
+
+                    <Button
+                        component={Link}
+                        to="/profile"
+                        color="inherit"
+                        startIcon={<AccountCircleOutlinedIcon />}
+                    >
+                        Profile
                     </Button>
 
                     <Button color="inherit">
