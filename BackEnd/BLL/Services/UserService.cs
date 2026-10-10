@@ -10,13 +10,18 @@ namespace BLL.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IMapper _mapper;
         private readonly PasswordHasher<UserEntity> _passwordHasher;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(
+            IUserRepository userRepository,
+            IMapper mapper,
+            ISubscriptionRepository subscriptionRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _subscriptionRepository = subscriptionRepository;
             _passwordHasher = new PasswordHasher<UserEntity>();
         }
 
@@ -77,6 +82,19 @@ namespace BLL.Services
             user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
 
             var createdUser = await _userRepository.CreateAsync(user);
+
+            if (createdUser.Role == UserRole.JobSeeker)
+            {
+                await _subscriptionRepository.CreateAsync(
+                    new SubscriptionEntity
+                    {
+                        UserId = createdUser.Id,
+                        Type = SubscriptionType.Free,
+                        Status = SubscriptionStatus.Active,
+                        StartedAt = DateTime.UtcNow,
+                        ExpiresAt = null
+                    });
+            }
 
             return _mapper.Map<UserDto>(createdUser);
         }

@@ -12,6 +12,7 @@ namespace DAL.Repository
         Task<IEnumerable<ResumeEntity>> GetAllAsync();
         Task<ResumeEntity?> GetByIdAsync(int id);
         Task<IEnumerable<ResumeEntity>> GetByUserIdAsync(int userId);
+        Task<int> CountByUserIdAsync(int userId);
         Task<ResumeEntity> CreateAsync(ResumeEntity resume);
         Task UpdateAsync(ResumeEntity resume);
         Task DeleteAsync(ResumeEntity resume);

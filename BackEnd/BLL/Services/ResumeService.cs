@@ -2,25 +2,26 @@
 using BLL.DTO;
 using DAL.Entity;
 using DAL.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Services
 {
     public class ResumeService : IResumeService
     {
         private readonly IResumeRepository _repository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly ISubscriptionService _subscriptionService;
         private readonly IMapper _mapper;
 
         public ResumeService(
             IResumeRepository repository,
-            IMapper mapper)
+            IMapper mapper,
+            ISubscriptionRepository subscriptionRepository,
+            ISubscriptionService subscriptionService)
         {
             _repository = repository;
             _mapper = mapper;
+            _subscriptionRepository = subscriptionRepository;
+            _subscriptionService = subscriptionService;
         }
 
         public async Task<IEnumerable<ResumeDto>> GetAllAsync()
@@ -49,6 +50,28 @@ namespace BLL.Services
 
         public async Task<ResumeDto> CreateAsync(CreateResumeDto dto)
         {
+            var subscription = await _subscriptionRepository.GetByUserIdAsync(dto.UserId);
+
+            if (subscription == null)
+            {
+                throw new InvalidOperationException(
+                    "User subscription was not found");
+            }
+
+            var subscriptionDto = _mapper.Map<SubscriptionDto>(subscription);
+
+            var isPremiumActive = _subscriptionService.IsPremiumActive(subscriptionDto);
+
+            if (!isPremiumActive)
+            {
+                var resumeCount = await _repository.CountByUserIdAsync(dto.UserId);
+
+                if (resumeCount >= 2)
+                {
+                    throw new InvalidOperationException("Free users can have a maximum of 2 resumes");
+                }
+            }
+
             var resume = new ResumeEntity
             {
                 UserId = dto.UserId,

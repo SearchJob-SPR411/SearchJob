@@ -30,5 +30,7 @@ namespace DAL.Entity
         public ICollection<VacancyEntity> Vacancies { get; set; } = new List<VacancyEntity>();
 
         public ICollection<ResumeEntity> Resumes { get; set; } = new List<ResumeEntity>();
+
+        public SubscriptionEntity? Subscription { get; set; }
     }
 }

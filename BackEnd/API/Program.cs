@@ -1,3 +1,4 @@
+using API.Seed;
 using BLL;
 using BLL.Services;
 using BLL.Settings;
@@ -14,7 +15,7 @@ namespace API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ namespace API
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
             builder.Services.AddScoped<JwtService>();
        
-            builder.Services.AddScoped<AuthService>();
+            builder.Services.AddScoped<AuthService>();          
 
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 
@@ -102,6 +103,10 @@ namespace API
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
             builder.Services.AddScoped<ICompanyService, CompanyService>();
 
+            builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+
+            builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+
             // Add AutoMapper
             builder.Services.AddAutoMapper(cfg =>
             {
@@ -140,7 +145,13 @@ namespace API
                 });
             });
 
-            var app = builder.Build();          
+            var app = builder.Build();
+
+            // Seed the admin user
+            using (var scope = app.Services.CreateScope())
+            {
+                await AdminSeeder.SeedAsync(scope.ServiceProvider);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
